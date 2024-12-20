@@ -5,7 +5,7 @@ from sklearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 import numpy as np
-
+import joblib
 
 def load_data(file_path):
 
@@ -62,10 +62,15 @@ def preprocessed_data(data):
     numeric_features = data.select_dtypes(include=['int64', 'float64']).columns
     categorical_features = data.select_dtypes(include=['object']).columns
     
-    le = LabelEncoder()
-    
+   
     for col in categorical_features:
-        data[col] = le.fit_transform(data[col])
+
+        label = LabelEncoder()
+        label.fit(data[col])
+        joblib.dump(label,col+"_encoder.pkl")
+        data[col] = label.transform(data[col])
+  
+
         
     X = data.drop(['diabetes'],axis=1)
     
@@ -75,8 +80,11 @@ def preprocessed_data(data):
     
     sc = StandardScaler()
      
-    X_train = sc.fit_transform(X_train)
+    sc.fit(X_train)
     
+    joblib.dump(sc,"scaler.pkl")
+    
+    X_train = sc.transform(X_train)
     X_test = sc.transform(X_test)    
     
     smote = SMOTE(random_state=22,k_neighbors=4)
