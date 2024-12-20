@@ -1,7 +1,12 @@
 import matplotlib.pyplot as plt
 import seaborn as sns   
-from cleaning import cleaned_df,categorical_features,continous_features,df_after_trans,correlation
+from cleaning import cleaned_df,categorical_features,continous_features,df_after_trans,correlation,initial_df
 
+
+def pair_plot(data,target):
+    sns.pairplot(data,hue=target,diag_kind='kde')
+    plt.show()
+    
 
 def count_plot_data(cleaned_df,tegorical_features):
     i=1
@@ -64,3 +69,4 @@ def plot_correlation_matrix(data):
 # data_distribution_after_trans(df_after_trans,continous_features)     #hist after transformations
 # plot_box_plots(df_after_trans,continous_features)                    #boxplots
 # plot_correlation_matrix(correlation)                                 #correlation_matrix
+pair_plot(initial_df,"diabetes")

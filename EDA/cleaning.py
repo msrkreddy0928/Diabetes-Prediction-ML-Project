@@ -3,8 +3,11 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.utils import resample
+from sklearn.feature_selection import SelectKBest, chi2,f_classif,mutual_info_classif
 from sklearn.preprocessing import OneHotEncoder,LabelEncoder
-
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import RFE
+from sklearn.decomposition import PCA
 
 
 df =pd.read_csv("EDA/data/diabetes_prediction_dataset.csv")
@@ -25,6 +28,12 @@ df =pd.read_csv("EDA/data/diabetes_prediction_dataset.csv")
 
 df.drop_duplicates(inplace=True)
 
+initial_df = df
+
+# plt.figure(figsize=(15,8))
+# sns.pairplot(initial_df.iloc[30000:],hue="diabetes",diag_kind='kde')
+# plt.show()
+
 # print(df.duplicated().sum())
 
 # print(df.shape)  #(96146, 9)
@@ -39,10 +48,6 @@ df_majority = df[(df['diabetes']==0)]
 df_majority.drop(df_majority[df_majority['smoking_history'] == 'No Info'].index,inplace=True) 
 
 # print("shape after removing from majority cat",df_majority.shape)    #(56222,9)
-
-
-
-
 
 # for col in df_majority.columns:
 #     print(len(df_majority[col]))
@@ -66,8 +71,6 @@ print(df['diabetes'].value_counts())
 
 
 df['smoking_history'] = df['smoking_history'].replace('ever','never')
-
-
 
 
 df['age'] = df['age'].replace([1.16,1.88,1.08,1.40,1.72,1.32],1)
@@ -118,6 +121,9 @@ df_after_trans = df
 
 for col in continous_features:
     print(col,df[col].skew())
+    
+# sns.pairplot(df_after_trans.iloc[30000:],hue="diabetes",diag_kind='kde')
+# plt.show()    
 
 
 Features_to_encode = ['gender','smoking_history']
@@ -138,14 +144,69 @@ df = df.drop(Features_to_encode,axis=1)
 
 print(df.head())
     
-    """
+    """    
     
 le = LabelEncoder()
 
 for col in Features_to_encode:
     df[col] = le.fit_transform(df[col])
+    
+
+sns.pairplot(df.iloc[30000:],hue="diabetes",diag_kind='kde')
+plt.show()    
 
     
+x =df.drop(['diabetes'],axis=1)
+y = df['diabetes']
+
+
+selector = SelectKBest(mutual_info_classif,k=5)
+
+x_new = selector.fit_transform(x,y)
+
+selected_features = x.columns[selector.get_support()]
+
+print("mutual_info",selected_features)
+
+
+selector = SelectKBest(f_classif,k=5)
+
+x_new = selector.fit_transform(x,y)
+
+selected_features = x.columns[selector.get_support()]
+
+print("f_classif",selected_features)
+
+
+selector = SelectKBest(chi2,k=5)
+
+x_new = selector.fit_transform(x,y)
+
+selected_features = x.columns[selector.get_support()]
+
+
+print("Chi2",selected_features)
+
+
+
+model = RandomForestClassifier()
+selector = RFE(model, n_features_to_select=5)
+X_new = selector.fit_transform(x, y)
+selected_features = x.columns[selector.support_]
+print("Recursive Feature",selected_features)
+
+
+
+model = RandomForestClassifier()
+model.fit(x, y)
+
+# Get feature importance
+feature_importance = model.feature_importances_ 
+
+print("Tree Based Models",feature_importance)
+
+
+# print("PCA",importance)
 
 # print(df.head())
 # print(df['gender'].value_counts())
@@ -156,6 +217,14 @@ for col in Features_to_encode:
 
 
 correlation = df.corr()
+
+    
+
+
+
+
+
+
 
 
 
