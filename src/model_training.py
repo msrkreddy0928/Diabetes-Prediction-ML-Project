@@ -12,6 +12,11 @@ def train_model(model,X_train, y_train):
 
 def save_model(model):
    joblib.dump(model,'best_model.pkl')
+   
+
+
+   
+   
        
     
     
