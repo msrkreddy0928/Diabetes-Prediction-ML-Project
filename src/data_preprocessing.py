@@ -3,9 +3,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder,LabelEncoder
 from sklearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
-from imblearn.under_sampling import RandomUnderSampler
+from sklearn.feature_selection import SelectKBest, chi2,f_classif,mutual_info_classif
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import RFE
 import numpy as np
+from scipy import stats
 import joblib
+import xgboost as xgb
+
 
 def load_data(file_path):
 
@@ -21,7 +26,7 @@ def clean_data(data):
     data_majority.drop(data_majority[data_majority['smoking_history'] == 'No Info'].index,inplace=True)
     
     data_minority = data[(data['diabetes']==1)]
-
+ 
     data = pd.concat([data_majority, data_minority])
     
     data['smoking_history'] = data['smoking_history'].replace('ever','never')
@@ -69,29 +74,126 @@ def preprocessed_data(data):
         label.fit(data[col])
         joblib.dump(label,col+"_encoder.pkl")
         data[col] = label.transform(data[col])
-  
 
         
-    X = data.drop(['diabetes'],axis=1)
+    # X = data.drop(['diabetes'],axis=1)
     
-    Y = data['diabetes']
+    # Y = data['diabetes']
     
-    X_train,X_test,Y_train,Y_test = train_test_split(X,Y, test_size=0.2, random_state=42)
-    
-    sc = StandardScaler()
-     
-    sc.fit(X_train)
-    
-    joblib.dump(sc,"scaler.pkl")
-    
-    X_train = sc.transform(X_train)
-    X_test = sc.transform(X_test)    
-    
-    smote = SMOTE(random_state=22,k_neighbors=4)
-    
-    # undersample = RandomUnderSampler(random_state=42)
+    # perform_statistical_tests(X,Y)
 
-    X_train,Y_train = smote.fit_resample(X_train,Y_train)
+    # selector = SelectKBest(mutual_info_classif,k=5)
+
+    # x_new = selector.fit_transform(X,Y)
+
+    # selected_features = X.columns[selector.get_support()]
+
+
+
+    # selector = SelectKBest(f_classif,k=5)
+
+    # x_new = selector.fit_transform(X,Y)
+
+    # selected_features = X.columns[selector.get_support()]
+
+    # # print("f_classif",selected_features)
+
+
+    # selector = SelectKBest(chi2,k=5)
+
+    # x_new = selector.fit_transform(X,Y)
+
+    # selected_features = X.columns[selector.get_support()]
+
+
+    # # print("Chi2",selected_features)
+
+    # model = RandomForestClassifier()
+    # selector = RFE(model, n_features_to_select=5)
+    # X_new = selector.fit_transform(X,Y)
+    # selected_features = X.columns[selector.support_]
+    # # print("Recursive Feature",selected_features)
+
+    # model = RandomForestClassifier()
+    # model.fit(X, Y)
+
+    # feature_importance = model.feature_importances_ 
+
+    # # print("Tree Based Models",feature_importance)
+
+    # After feature reduction the resulted features are
+
+
+    X = data.loc[:,['age','smoking_history','bmi','HbA1c_level','blood_glucose_level']]
+    Y = data['diabetes']
+
+    X_train,X_test,Y_train,Y_test = train_test_split(X,Y, test_size=0.2, random_state=42)
+
+    # sc = StandardScaler()
+     
+    # sc.fit(X_train)
+    
+    # joblib.dump(sc,"scaler.pkl")
+    
+    # X_train = sc.transform(X_train)
+    # X_test = sc.transform(X_test)    
+    
+    scale_weight = len(Y_train[Y_train == 0]) / len(Y_train[Y_train == 1])
+   
+    
+    # xgboost_model = xgb.XGBClassifier(scale_pos_weight=scale_weight ,random_state=42)
+    # xgboost_model.fit(X_train, Y_train)
+    # joblib.dump(xgboost_model,"xgboost.pkl")
+    
+    # xgb_train_pred = xgboost_model.predict(X_train)
+    # xgb_test_pred = xgboost_model.predict(X_test)
+    # X_train_new = pd.DataFrame(X_train)
+    # X_test_new = pd.DataFrame(X_test)
+    # X_train_new[5] = xgb_train_pred
+    # X_test_new[5] = xgb_test_pred
+    
+    # smote = SMOTE(random_state=42,k_neighbors=4)
+    # X_train_new,Y_train = smote.fit_resample(X_train,Y_train)
  
     return X_train,X_test,Y_train,Y_test
+
+
+
+def perform_statistical_tests(X,y):
+   
+    numeric_features = ['age','bmi','HbA1c_level','blood_glucose_level']
+    categorical_features = ['gender','hypertension','heart_disease','smoking_history']
+    test_result = {}
+    
+
+    group1 = X[numeric_features][y == y.unique()[0]]
+    group2 = X[numeric_features][y == y.unique()[1]]
+    
+    t_stat, p_value = stats.ttest_ind(group1, group2)
+    print("Two-sample t-test:")
+    print(f"t-statistic: {t_stat}, p-value: {p_value}")
+    # if p_value < 0.05:
+    #     print("Reject the null hypothesis")
+    # else:
+    #     print("Fail to reject the null hypothesis")
+    # print()
+  
+    for col in categorical_features:
+        print(col)
+        contingency_table = pd.crosstab(X[col], y)
+        chi2, p, dof, expected = stats.chi2_contingency(contingency_table)
+        test_result[col] = {
+            'Chi-Square Statistic': chi2,
+            'p-value': p,
+            'Degrees of Freedom': dof,
+            'Dependent': p < 0.05  
+        }
+        print("Chi-Square Test Results for Categorical Variables:",col)
+        print(test_result)
+
+   
+
+
+  
+
 

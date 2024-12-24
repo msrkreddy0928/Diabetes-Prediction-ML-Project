@@ -1,4 +1,5 @@
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import GridSearchCV
 
 
 def evaluate_model(model, X_test, y_test):
@@ -9,3 +10,22 @@ def evaluate_model(model, X_test, y_test):
    
     
     return accuracy, class_report
+
+def training_accuracy_(model,X_train,Y_train):    
+    Y_pred = model.predict(X_train)
+    accuracy = accuracy_score(Y_train,Y_pred)
+
+    return accuracy
+
+
+
+
+def grid_search(model,param_grid,X_train,Y_train):
+    grid_search = GridSearchCV(estimator= model, 
+                           param_grid=param_grid, 
+                           cv=5,
+                           scoring='accuracy', )
+    print("yes")
+    grid_search.fit(X_train,Y_train)
+     
+    return grid_search  
