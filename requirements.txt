@@ -5,7 +5,7 @@ matplotlib
 scikit-learn
 flask
 imbalanced-learn
-Gunicorn
+gunicorn
 joblib
 scipy
 xgboost
