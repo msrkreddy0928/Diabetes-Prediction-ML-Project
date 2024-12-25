@@ -1,6 +1,6 @@
-# from  data_preprocessing import load_data,preprocessed_data
-# from model_training import train_model,save_model
-# from model_evaluation import evaluate_model,training_accuracy_,grid_search
+from  data_preprocessing import load_data,preprocessed_data
+from model_training import train_model,save_model
+from model_evaluation import evaluate_model,training_accuracy_,grid_search
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
