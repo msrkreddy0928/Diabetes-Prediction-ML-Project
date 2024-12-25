@@ -7,11 +7,11 @@ from sklearn.preprocessing import LabelEncoder
 
 newapp = Flask(__name__)
 
-model=joblib.load("model1.pkl")
-# xgboost = joblib.load('xgboost.pkl')
+model=joblib.load("best_model1.pkl")
+xgboost = joblib.load('xgboost.pkl')
 
 # gender_encoder = joblib.load('gender_encoder.pkl')
-# smoking_history_encoder = joblib.load('smoking_history_encoder.pkl')
+smoking_history_encoder = joblib.load('smoking_history_encoder.pkl')
 scaler = joblib.load('scaler.pkl')
 
 
@@ -32,7 +32,7 @@ def predict():
             age  = request.form['age']
             # hypertension = request.form['hypertension']
             # heart_disease = request.form['heartdisease']
-            # smoking_history = request.form['smokinghistory']
+            smoking_history = request.form['smokinghistory']
             bmi=request.form['bmi']
             HbA1c = request.form['HbA1c']
             blood_glucose_level = request.form['bloodglucoselevel']
@@ -54,19 +54,19 @@ def predict():
        
         # gender_encoded = gender_encoder.transform([gender])[0]
    
-        # smoking_history_encoded = smoking_history_encoder.transform([smoking_history])[0]
+        smoking_history_encoded = smoking_history_encoder.transform([smoking_history])[0]
 
-        input_data = [[age,bmi,HbA1c,blood_glucose_level]]
+        input_data = [[age,smoking_history_encoded,bmi,HbA1c,blood_glucose_level]]
         
-        # scaled_input_data = scaler.transform(input_data)
+        scaled_input_data = scaler.transform(input_data)
         
-        # bg = xgboost.predict(scaled_input_data)
+        bg = xgboost.predict(scaled_input_data)
         
-        # scaled_input_data = pd.DataFrame(scaled_input_data)
+        scaled_input_data = pd.DataFrame(scaled_input_data)
         
-        # scaled_input_data[5] = bg
+        scaled_input_data[5] = bg
     
-        prediction = model.predict(input_data)
+        prediction = model.predict(scaled_input_data)
         
         prediction = (prediction[0] > 0.5).astype(int)
         
@@ -81,6 +81,13 @@ def predict():
           
         return render_template('home1.html', prediction_text=pred_text)
    
+        
+        
+    
+
+if __name__ == '__main__':  
+    newapp.run(debug=True)
+    
         
         
     
