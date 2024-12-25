@@ -111,4 +111,4 @@ def run_pipeline(file_path):
  
 
 if __name__ == '__main__':
-    run_pipeline('/content/diabetes_prediction_dataset.csv') 
+    run_pipeline('EDA/data/diabetes_prediction_dataset.csv') 
