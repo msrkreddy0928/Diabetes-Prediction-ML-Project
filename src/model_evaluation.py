@@ -5,6 +5,11 @@ from sklearn.model_selection import GridSearchCV
 def evaluate_model(model, X_test, y_test):
     y_pred = model.predict(X_test)
     y_pred = (y_pred > 0.5).astype(int)
+    # probabilities_class_1 = model.predict_proba(X_test)[:, 1]
+    # threshold = 0.3 
+    # predicted_class = (probabilities_class_1 > threshold).astype(int)
+    # print(X_test) 
+    # print(predicted_class)
     accuracy = accuracy_score(y_test, y_pred)
     class_report = classification_report(y_test, y_pred)
    
