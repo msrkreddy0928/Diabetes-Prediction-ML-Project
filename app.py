@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 
-newapp = Flask(__name__)
+app = Flask(__name__)
 
 model=joblib.load("best_model1.pkl")
 xgboost = joblib.load('xgboost.pkl')
@@ -15,14 +15,14 @@ smoking_history_encoder = joblib.load('smoking_history_encoder.pkl')
 scaler = joblib.load('scaler.pkl')
 
 
-@newapp.route("/")
+@app.route("/")
 def home():
     pred_text = None  
 
     return render_template('home1.html',prediction_text=pred_text)
 
 
-@newapp.route('/Predict',methods=['POST'])
+@app.route('/Predict',methods=['POST'])
 def predict():
     
     pred_text = None  
@@ -33,9 +33,9 @@ def predict():
             # hypertension = request.form['hypertension']
             # heart_disease = request.form['heartdisease']
             smoking_history = request.form['smokinghistory']
-            bmi=request.form['bmi']
-            HbA1c = request.form['HbA1c']
-            blood_glucose_level = request.form['bloodglucoselevel']
+            bmi=float(request.form['bmi'])
+            HbA1c = float(request.form['HbA1c'])
+            blood_glucose_level = float(request.form['bloodglucoselevel'])
           
         except:
             
@@ -55,6 +55,9 @@ def predict():
         # gender_encoded = gender_encoder.transform([gender])[0]
    
         smoking_history_encoded = smoking_history_encoder.transform([smoking_history])[0]
+        
+        bmi = np.log1p(bmi)
+        blood_glucose_level = np.log1p(blood_glucose_level)
 
         input_data = [[age,smoking_history_encoded,bmi,HbA1c,blood_glucose_level]]
         
@@ -86,7 +89,7 @@ def predict():
     
 
 if __name__ == '__main__':  
-    newapp.run(debug=True)
+    app.run(debug=True)
     
         
         
