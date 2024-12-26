@@ -69,6 +69,16 @@ def predict():
         
         scaled_input_data[5] = bg
     
+        prediction_prob = model.predict_proba(scaled_input_data)
+        
+        print(prediction_prob)
+        
+        if prediction_prob[0][0]>prediction_prob[0][1]:
+            pred_tex = "Your diabetes results is negative with "+str(prediction_prob[0][0]*100)+"% accuracy"
+        else:
+            pred_tex = "Your diabetes results is positive with "+str(prediction_prob[0][1]*100)+"% accuracy" 
+        
+        
         prediction = model.predict(scaled_input_data)
         
         prediction = (prediction[0] > 0.5).astype(int)
@@ -76,11 +86,9 @@ def predict():
         print(prediction)
 
         if(prediction==0):
-            pred_text="Your Diabetes result is negative"
-        elif(prediction==1):
-          pred_text="Your Diabetes result is positive"
+            pred_text= pred_tex
         else:
-            pred_text="cant decide"  
+          pred_text= pred_tex
           
         return render_template('home1.html', prediction_text=pred_text)
    

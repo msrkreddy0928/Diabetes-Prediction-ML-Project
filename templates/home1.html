@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ML Prediction Form</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <script>
+        function hidePredictionText() {
+            const resultDiv = document.querySelector('.result');
+            if (resultDiv) {
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 7000); 
+            }
+        }
+    </script>
 </head>
-<body>
+<body onload="hidePredictionText()">
 
     <div class="form-container">
         <h1>Diabetes Prediction </h1>
@@ -75,7 +85,7 @@
                  <!-- Feature 7: HbA1c level  -->
                  <div class="form-group">
                     <label for="HbA1c">HbA1c level</label>
-                    <input type="float" id="HbA1c" name="HbA1c" min="1" max="100" required>
+                    <input type="float" id="HbA1c" name="HbA1c" min="1" max="18" required>
                 </div>
 
                 <!-- Feature 8: blood glucose level  -->
@@ -92,7 +102,9 @@
         </form>
 
         {% if prediction_text %}
+        <div class="result">
         <h3>{{ prediction_text }}</h3>
+        </div>
     {% endif %}
 
 
