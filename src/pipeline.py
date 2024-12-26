@@ -44,6 +44,9 @@ def run_pipeline(file_path):
   
   X_train,X_test,Y_train,Y_test = preprocessed_data(data)
   
+  print(X_train.shape)
+  print(X_test.shape)
+  
   for i,model in models.items():
         
         # if i =="Decision Tree":

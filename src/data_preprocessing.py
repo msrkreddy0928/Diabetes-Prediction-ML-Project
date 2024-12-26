@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFE
 import numpy as np
 from scipy import stats
+from sklearn.metrics import accuracy_score,classification_report
 import joblib
 import xgboost as xgb
 
@@ -153,6 +154,8 @@ def preprocessed_data(data):
     X_train_new[5] = xgb_train_pred
     X_test_new[5] = xgb_test_pred
     
+    accuracy = accuracy_score(Y_test,xgb_test_pred)
+    classrep = classification_report(Y_test,xgb_test_pred)
     smote = SMOTE(random_state=42,k_neighbors=4)
     X_train_new,Y_train = smote.fit_resample(X_train_new,Y_train)
 
