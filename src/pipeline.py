@@ -1,4 +1,4 @@
-from  data_preprocessing import load_data,preprocessed_data
+from  data_preprocessing import load_data,preprocessed_data,get_cleaned_df,get_cat_features,get_con_features,get_corr,get_trans_df
 from model_training import train_model,save_model
 from model_evaluation import evaluate_model,training_accuracy_,grid_search
 from sklearn.linear_model import LogisticRegression
@@ -7,7 +7,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import pandas as pd
+from data_preprocessing import cleaned_df,cat_features,con_features,corr,trans_df
+from Visualization import pair_plot,count_plot_data,data_distribution_after_trans,raw_data_distribution,plot_box_plots,plot_correlation_matrix
 import joblib
+
 
 models = {  #"Logistic Regression": LogisticRegression(),
 #                   "KNN" :KNeighborsClassifier(n_neighbors=4,p=1),
@@ -39,15 +42,27 @@ param_grid_RF = {
 accuracy_dict = {}
 
 def run_pipeline(file_path):
+    
+    data = load_data(file_path)
+    
+    X_train,X_test,Y_train,Y_test = preprocessed_data(data)
   
-  data = load_data(file_path)
-  
-  X_train,X_test,Y_train,Y_test = preprocessed_data(data)
-  
-  print(X_train.shape)
-  print(X_test.shape)
-  
-  for i,model in models.items():
+
+    cleaned_df = get_cleaned_df()
+    cat_features = get_cat_features()
+    con_features = get_con_features()
+    trans_df = get_trans_df()
+    corr = get_corr()
+    
+    #pair_plot(cleaned_df.iloc[0:50000],"diabetes")                          #pair plots
+    #count_plot_data(cleaned_df,cat_features)                                #count plots
+    #raw_data_distribution(cleaned_df,con_features)                          #hist
+    #data_distribution_after_trans(trans_df,con_features)                    #hist after transformations
+    #plot_box_plots(cleaned_df,con_features)                                  #boxplots
+    #plot_correlation_matrix(corr)                                           #heat map
+
+    
+    for i,model in models.items():
         
         # if i =="Decision Tree":
         #     print("yes")

@@ -11,6 +11,14 @@ from scipy import stats
 from sklearn.metrics import accuracy_score,classification_report
 import joblib
 import xgboost as xgb
+import matplotlib.pyplot as plt
+import seaborn as sns   
+
+cleaned_df = None
+cat_features = None
+con_features = None
+trans_df = None
+corr=None    
 
 
 def load_data(file_path):
@@ -46,7 +54,13 @@ def clean_data(data):
     
 
     # for col in continous_features:
-    #   print(col,data[col].skew())        
+    #   print(col,data[col].skew())
+    global cleaned_df
+    cleaned_df = data
+    global cat_features 
+    cat_features = categorical_features
+    global con_features
+    con_features = continous_features
     
     continous_features_for_log = ['bmi','blood_glucose_level']
     # for col in continous_features_for_log:
@@ -54,12 +68,15 @@ def clean_data(data):
     
     for col in continous_features_for_log:
       data[col] = np.log1p(data[col])
-      # print(col,data[col].skew())
+    #   print(col,data[col].skew())
     
     data.dropna(inplace=True)
     
+    global trans_df
+    trans_df = data
     
     return data
+
 
 def preprocessed_data(data):
     
@@ -69,7 +86,7 @@ def preprocessed_data(data):
     numeric_features = data.select_dtypes(include=['int64', 'float64']).columns
     categorical_features = data.select_dtypes(include=['object']).columns
     
-   
+    
     for col in categorical_features:
 
         label = LabelEncoder()
@@ -78,7 +95,10 @@ def preprocessed_data(data):
         data[col] = label.transform(data[col])
 
         
-    # X = data.drop(['diabetes'],axis=1)
+    X = data.drop(['diabetes'],axis=1)
+    
+    global corr
+    corr = X.corr()
     
     # Y = data['diabetes']
     
@@ -130,7 +150,8 @@ def preprocessed_data(data):
     Y = data['diabetes']
 
     X_train,X_test,Y_train,Y_test = train_test_split(X,Y, test_size=0.2, random_state=42)
-
+  
+    
     sc = StandardScaler()
      
     sc.fit(X_train)
@@ -196,3 +217,13 @@ def preprocessed_data(data):
 #         print("Chi-Square Test Results for Categorical Variables:",col)
 #         print(test_result)
 
+def get_cleaned_df():
+    return cleaned_df
+def get_cat_features():
+    return cat_features
+def get_con_features():
+    return con_features
+def get_trans_df():
+    return trans_df
+def get_corr():
+    return corr
