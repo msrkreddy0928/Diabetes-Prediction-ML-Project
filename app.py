@@ -94,9 +94,12 @@ def predict():
         print(prediction)
 
         if(prediction==0):
-            pred_text= "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes." 
+            if y_pred>49:
+                pred_text = "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes.As chances of diabetes is more please consult your doctor" 
+            else:
+                pred_text= "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes." 
         else:
-          pred_text= "Your diabetes results is positive and having "+str(np.round(100-y_pred,2))+"% of chances of not having diabetes."
+          pred_text= "Your diabetes results is positive and having "+str(np.round(100-y_pred,2))+"% of chances of not having diabetes.Please consult your doctor for further treatment"
           
         return render_template('home1.html', prediction_text=pred_text)
    

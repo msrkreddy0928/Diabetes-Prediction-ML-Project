@@ -159,7 +159,8 @@ def preprocessed_data(data):
     joblib.dump(sc,"scaler.pkl")
     
     X_train = sc.transform(X_train)
-    X_test = sc.transform(X_test)    
+    X_test = sc.transform(X_test)
+        
     
     scale_weight = len(Y_train[Y_train == 0]) / len(Y_train[Y_train == 1])
    
@@ -170,6 +171,12 @@ def preprocessed_data(data):
     
     xgb_train_pred = xgboost_model.predict(X_train)
     xgb_test_pred = xgboost_model.predict(X_test)
+    # acc = accuracy_score(Y_test,xgb_test_pred)
+    # report = classification_report(Y_test,xgb_test_pred)
+    
+    # print("acc",acc)
+    # print("classification_report",report)
+    
     X_train_new = pd.DataFrame(X_train)
     X_test_new = pd.DataFrame(X_test)
     X_train_new[5] = xgb_train_pred
