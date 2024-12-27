@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 model=joblib.load("best_model1.pkl")
 xgboost = joblib.load('xgboost.pkl')
+regg_model = joblib.load('regg_model.pkl')
 
 # gender_encoder = joblib.load('gender_encoder.pkl')
 smoking_history_encoder = joblib.load('smoking_history_encoder.pkl')
@@ -68,15 +69,22 @@ def predict():
         scaled_input_data = pd.DataFrame(scaled_input_data)
         
         scaled_input_data[5] = bg
+        
+        y_pred = regg_model.predict(scaled_input_data)[0]
+        print(y_pred)
+        y_pred = np.round(y_pred*100,2)
+     
+      
+         
     
-        prediction_prob = model.predict_proba(scaled_input_data)
+        # prediction_prob = model.predict_proba(scaled_input_data)
         
-        print(prediction_prob)
+        # print(prediction_prob)
         
-        if prediction_prob[0][0]>prediction_prob[0][1]:
-            pred_tex = "Your diabetes results is negative with "+str(prediction_prob[0][0]*100)+"% accuracy"
-        else:
-            pred_tex = "Your diabetes results is positive with "+str(prediction_prob[0][1]*100)+"% accuracy" 
+        # if prediction_prob[0][0]>prediction_prob[0][1]:
+        #     pred_tex = "Your diabetes results is negative with "+str(prediction_prob[0][0]*100)+"% accuracy"
+        # else:
+        #     pred_tex = "Your diabetes results is positive with "+str(prediction_prob[0][1]*100)+"% accuracy" 
         
         
         prediction = model.predict(scaled_input_data)
@@ -86,15 +94,13 @@ def predict():
         print(prediction)
 
         if(prediction==0):
-            pred_text= pred_tex
+            pred_text= "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes." 
         else:
-          pred_text= pred_tex
+          pred_text= "Your diabetes results is positive and having "+str(np.round(100-y_pred,2))+"% of chances of not having diabetes."
           
         return render_template('home1.html', prediction_text=pred_text)
    
-        
-        
-    
+            
 
 if __name__ == '__main__':  
     app.run(debug=True)
