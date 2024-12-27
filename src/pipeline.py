@@ -135,6 +135,16 @@ def run_pipeline(file_path):
     y_pred_prob_train,y_pred_prob_test = regg_evaluate_model(model_regg_trained,X_train,X_test)
     
     # model_reg =LinearRegression()
+    # print(X_train.shape)
+    # print(X_test.shape)
+    print(y_pred_prob_test)
+    new_df = pd.DataFrame(X_train)
+    y_pred_prob_train_df = pd.DataFrame(y_pred_prob_train)
+    # print(y_pred_prob_train_df)
+    new_df = pd.concat([new_df, y_pred_prob_train_df], axis=1)
+    new_df.to_csv("/home/shiva/Desktop/df.csv", index=False)
+    
+    
    
     model_regg_trained = regg_train(model_reg,X_train,y_pred_prob_train)
     r2,mse = reg_evaluate(model_regg_trained,X_test,y_pred_prob_test)
