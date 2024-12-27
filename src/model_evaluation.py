@@ -1,6 +1,6 @@
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report,mean_squared_error,r2_score
 from sklearn.model_selection import GridSearchCV
-
+import numpy as np
 
 def evaluate_model(model, X_test, y_test):
     y_pred = model.predict(X_test)
@@ -23,6 +23,24 @@ def training_accuracy_(model,X_train,Y_train):
     return accuracy
 
 
+def regg_evaluate_model(model,X_train,X_test):
+    y_pred_train = model.predict(X_train)
+    y_pred_prob_train = 1 / (1 + np.exp(-y_pred_train))
+    y_pred_test = model.predict(X_test)
+    y_pred_prob_test = 1 / (1 + np.exp(-y_pred_test))
+    return y_pred_prob_train,y_pred_prob_test
+
+def reg_evaluate(model,X_test,y_test):
+    y_pred = model.predict(X_test)
+    r2 = r2_score(y_test,y_pred)
+    mse = mean_squared_error(y_test,y_pred)
+    return r2,mse
+
+
+
+    
+
+
 
 
 def grid_search(model,param_grid,X_train,Y_train):
@@ -30,7 +48,7 @@ def grid_search(model,param_grid,X_train,Y_train):
                            param_grid=param_grid, 
                            cv=5,
                            scoring='accuracy', )
-    print("yes")
+
     grid_search.fit(X_train,Y_train)
      
     return grid_search  

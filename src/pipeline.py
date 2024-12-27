@@ -1,7 +1,7 @@
 from  data_preprocessing import load_data,preprocessed_data,get_cleaned_df,get_cat_features,get_con_features,get_corr,get_trans_df
-from model_training import train_model,save_model
-from model_evaluation import evaluate_model,training_accuracy_,grid_search
-from sklearn.linear_model import LogisticRegression
+from model_training import train_model,save_model,train_reg_model,regg_train
+from model_evaluation import evaluate_model,training_accuracy_,grid_search,regg_evaluate_model,reg_evaluate
+from sklearn.linear_model import LogisticRegression,LinearRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -10,13 +10,17 @@ import pandas as pd
 from data_preprocessing import cleaned_df,cat_features,con_features,corr,trans_df
 from Visualization import pair_plot,count_plot_data,data_distribution_after_trans,raw_data_distribution,plot_box_plots,plot_correlation_matrix
 import joblib
+import numpy as np
 
 
 models = {  #"Logistic Regression": LogisticRegression(),
 #                   "KNN" :KNeighborsClassifier(n_neighbors=4,p=1),
 #                   "SVM" : SVC(kernel='poly'),
 #                  "Decision Tree": DecisionTreeClassifier(criterion='entropy',max_depth=30,splitter='best'),
-                 "Random Forest": RandomForestClassifier(class_weight='balanced',random_state=42) }
+                 "Random Forest": RandomForestClassifier(class_weight='balanced',random_state=42)
+                 }
+
+
 
 param_grid_DT ={
     'criterion': ['gini', 'entropy'],        
@@ -38,6 +42,7 @@ param_grid_RF = {
        
                             
 }
+model_reg = LinearRegression()
 
 accuracy_dict = {}
 
@@ -104,6 +109,7 @@ def run_pipeline(file_path):
         # new_data_df = pd.DataFrame(new_data_df)
 
         # new_data_df[5] = xgb_test_pred
+        
     
         model_trained = train_model(model,X_train,Y_train)
         
@@ -121,6 +127,22 @@ def run_pipeline(file_path):
         print(f"training acuuracy:{training_accuracy*100:.2f}%")
         print(f"Model Accuracy: {accuracy * 100:.2f}%")
         print(f"Classification Report:\n{report}")
+        
+        
+    
+    model_regg_trained = train_reg_model(model_reg,X_train,Y_train)
+        
+    y_pred_prob_train,y_pred_prob_test = regg_evaluate_model(model_regg_trained,X_train,X_test)
+    
+    # model_reg =LinearRegression()
+   
+    model_regg_trained = regg_train(model_reg,X_train,y_pred_prob_train)
+    r2,mse = reg_evaluate(model_regg_trained,X_test,y_pred_prob_test)
+    
+    print("r2 score is",r2)
+    print("mean square error is",mse)
+        
+        
         
     #  print("best model_Score",max(sorted(accuracy_dict.values())))
 
