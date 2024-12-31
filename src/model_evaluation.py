@@ -38,10 +38,10 @@ def reg_evaluate(model,X_test,y_test):
     return r2,mse
 
 
-def FNN_evaluate(model,X_train,Y_train,X_test,y_test):
-    eval = model.evaluate(X_test,y_test)
+# def FNN_evaluate(model,X_train,Y_train,X_test,y_test):
+#     eval = model.evaluate(X_test,y_test)
 
-    return eval
+#     return eval
     
 
 
