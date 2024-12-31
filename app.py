@@ -31,16 +31,26 @@ def predict():
     if request.method == 'POST':
         try:
             # gender = request.form['gender']
-            age  = request.form['age']
+            age  = int(request.form['age'])
             # hypertension = request.form['hypertension']
             # heart_disease = request.form['heartdisease']
             smoking_history = request.form['smokinghistory']
             bmi=float(request.form['bmi'])
             HbA1c = float(request.form['HbA1c'])
             blood_glucose_level = float(request.form['bloodglucoselevel'])
+            
+            if age>110 or age<0:
+                return render_template('home1.html', prediction_text="Invalid input age. Please enter valid age.")
+            
+            if bmi>100 or bmi<0:
+                return   render_template('home1.html', prediction_text="Invalid input bmi. Please enter valid bmi value.")
+            if HbA1c>18 or HbA1c<0:
+                 return   render_template('home1.html', prediction_text="Invalid input HbA1c. Please enter valid hbA1c value.")
+             
+            if blood_glucose_level>300 or blood_glucose_level<0:
+                 return   render_template('home1.html', prediction_text="Invalid input blood_glucose_level. Please enter valid blood_glucose_level value.") 
           
         except:
-            
             return render_template('home1.html', prediction_text="Invalid input. Please enter numeric values.")    
         
         # if hypertension=='yes':    
