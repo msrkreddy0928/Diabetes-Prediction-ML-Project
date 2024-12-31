@@ -10,6 +10,7 @@ app = Flask(__name__)
 model=joblib.load("best_model1.pkl")
 xgboost = joblib.load('xgboost.pkl')
 regg_model = joblib.load('regg_model.pkl')
+fnn_model = joblib.load('fnn_model.pkl')
 
 # gender_encoder = joblib.load('gender_encoder.pkl')
 smoking_history_encoder = joblib.load('smoking_history_encoder.pkl')
@@ -30,16 +31,26 @@ def predict():
     if request.method == 'POST':
         try:
             # gender = request.form['gender']
-            age  = request.form['age']
+            age  = int(request.form['age'])
             # hypertension = request.form['hypertension']
             # heart_disease = request.form['heartdisease']
             smoking_history = request.form['smokinghistory']
             bmi=float(request.form['bmi'])
             HbA1c = float(request.form['HbA1c'])
             blood_glucose_level = float(request.form['bloodglucoselevel'])
+            
+            if age>110 or age<0:
+                return render_template('home1.html', prediction_text="Invalid input age. Please enter valid age.")
+            
+            if bmi>100 or bmi<0:
+                return   render_template('home1.html', prediction_text="Invalid input bmi. Please enter valid bmi value.")
+            if HbA1c>18 or HbA1c<0:
+                 return   render_template('home1.html', prediction_text="Invalid input HbA1c. Please enter valid hbA1c value.")
+             
+            if blood_glucose_level>300 or blood_glucose_level<0:
+                 return   render_template('home1.html', prediction_text="Invalid input blood_glucose_level. Please enter valid blood_glucose_level value.") 
           
         except:
-            
             return render_template('home1.html', prediction_text="Invalid input. Please enter numeric values.")    
         
         # if hypertension=='yes':    
@@ -73,6 +84,13 @@ def predict():
         y_pred = regg_model.predict(scaled_input_data)[0]
         print(y_pred)
         y_pred = np.round(y_pred*100,2)
+        
+        pred = fnn_model.predict(scaled_input_data)
+        print("fnn prediction",pred)
+        prediction = (pred[0][0] > 0.5).astype(int)
+        print("fnn predict",prediction)
+        
+        
      
       
          
@@ -95,7 +113,7 @@ def predict():
 
         if(prediction==0):
             if y_pred>49:
-                pred_text = "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes.As chances of diabetes is more please consult your doctor." 
+                pred_text = "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes.As chances of diabetes is more please consult your doctor. v" 
             else:
                 pred_text= "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes." 
         else:
