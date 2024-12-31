@@ -1,6 +1,6 @@
 from  data_preprocessing import load_data,preprocessed_data,get_cleaned_df,get_cat_features,get_con_features,get_corr,get_trans_df
-from model_training import train_model,save_model,train_reg_model,regg_train
-from model_evaluation import evaluate_model,training_accuracy_,grid_search,regg_evaluate_model,reg_evaluate
+from model_training import train_model,save_model,train_reg_model,regg_train,FNN_train
+from model_evaluation import evaluate_model,training_accuracy_,grid_search,regg_evaluate_model,reg_evaluate,FNN_evaluate
 from sklearn.linear_model import LogisticRegression,LinearRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -65,7 +65,13 @@ def run_pipeline(file_path):
     #data_distribution_after_trans(trans_df,con_features)                    #hist after transformations
     #plot_box_plots(cleaned_df,con_features)                                  #boxplots
     #plot_correlation_matrix(corr)                                           #heat map
-
+    
+    model_FNN = FNN_train(X_train,Y_train,X_test,Y_test)
+        
+    eval = FNN_evaluate(model_FNN,X_train,Y_train,X_test,Y_test)
+    
+    print("Using FNN")
+    print("loss:{:0.3f},accuracy:{:0.3f}".format(eval[0],eval[1]))
     
     for i,model in models.items():
         
@@ -109,7 +115,6 @@ def run_pipeline(file_path):
         # new_data_df = pd.DataFrame(new_data_df)
 
         # new_data_df[5] = xgb_test_pred
-        
     
         model_trained = train_model(model,X_train,Y_train)
         

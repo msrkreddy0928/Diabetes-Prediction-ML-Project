@@ -10,6 +10,7 @@ app = Flask(__name__)
 model=joblib.load("best_model1.pkl")
 xgboost = joblib.load('xgboost.pkl')
 regg_model = joblib.load('regg_model.pkl')
+fnn_model = joblib.load('fnn_model.pkl')
 
 # gender_encoder = joblib.load('gender_encoder.pkl')
 smoking_history_encoder = joblib.load('smoking_history_encoder.pkl')
@@ -73,6 +74,13 @@ def predict():
         y_pred = regg_model.predict(scaled_input_data)[0]
         print(y_pred)
         y_pred = np.round(y_pred*100,2)
+        
+        pred = fnn_model.predict(scaled_input_data)
+        print("fnn prediction",pred)
+        prediction = (pred[0][0] > 0.5).astype(int)
+        print("fnn predict",prediction)
+        
+        
      
       
          
@@ -95,7 +103,7 @@ def predict():
 
         if(prediction==0):
             if y_pred>49:
-                pred_text = "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes.As chances of diabetes is more please consult your doctor." 
+                pred_text = "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes.As chances of diabetes is more please consult your doctor. v" 
             else:
                 pred_text= "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes." 
         else:
