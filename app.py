@@ -10,7 +10,7 @@ app = Flask(__name__)
 model=joblib.load("best_model1.pkl")
 xgboost = joblib.load('xgboost.pkl')
 regg_model = joblib.load('regg_model.pkl')
-fnn_model = joblib.load('fnn_model.pkl')
+# fnn_model = joblib.load('fnn_model.pkl')
 
 # gender_encoder = joblib.load('gender_encoder.pkl')
 smoking_history_encoder = joblib.load('smoking_history_encoder.pkl')
@@ -85,10 +85,10 @@ def predict():
         print(y_pred)
         y_pred = np.round(y_pred*100,2)
         
-        pred = fnn_model.predict(scaled_input_data)
-        print("fnn prediction",pred)
-        prediction = (pred[0][0] > 0.5).astype(int)
-        print("fnn predict",prediction)
+        # pred = fnn_model.predict(scaled_input_data)
+        # print("fnn prediction",pred)
+        # prediction = (pred[0][0] > 0.5).astype(int)
+        # print("fnn predict",prediction)
         
         
      
