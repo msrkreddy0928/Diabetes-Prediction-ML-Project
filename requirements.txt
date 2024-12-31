@@ -9,7 +9,8 @@ gunicorn
 joblib
 scipy
 xgboost
-
+keras
+tensorflow
 
 
 
