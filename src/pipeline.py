@@ -4,7 +4,7 @@ from model_evaluation import evaluate_model,training_accuracy_,grid_search,regg_
 from sklearn.linear_model import LogisticRegression,LinearRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from sklearn.svm import SVC
 import pandas as pd
 from data_preprocessing import cleaned_df,cat_features,con_features,corr,trans_df
@@ -21,8 +21,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 
-models = { "Random Forest": RandomForestClassifier(class_weight='balanced',random_state=42)
-                 }
+models = { "Random Forest": RandomForestClassifier(class_weight='balanced',random_state=42)}
 
 
 
@@ -48,7 +47,10 @@ param_grid_RF = {
        
                             
 }
-model_reg = LinearRegression()
+
+
+
+model_regg = LinearRegression()
 
 accuracy_dict = {}
 
@@ -56,7 +58,7 @@ accuracy_dict = {}
 # Main function to run the pipeline, load data, preprocess it, train models, and evaluate performance
 
 def run_pipeline(file_path):
-    logging.info("pipelione started")
+    logging.info("pipeline started")
     
     data = load_data(file_path)
     
@@ -107,16 +109,20 @@ def run_pipeline(file_path):
         
    
      
-    X_train_new = X_train[[3]]
+    X_train_new = X_train.iloc[:,0:5]
 
-    X_test_new = X_test[[3]]
+    X_test_new = X_test.iloc[:,0:5]
  
-    model_regg_trained = train_reg_model(model_reg,X_train_new,Y_train)
+    model_regg_trained = train_reg_model(model_regg,X_train_new,Y_train)
+
         
     y_pred_prob_train,y_pred_prob_test = regg_evaluate_model(model_regg_trained,X_train_new,X_test_new)
     
-    model_regg_trained = regg_train(model_reg,X_train_new,y_pred_prob_train)
-    r2,mse = reg_evaluate(model_regg_trained,X_test_new,y_pred_prob_test)
+                                                                                                                                                                                                                                                                                                                                          
+    
+    model_regg_trained = regg_train(model_regg,X_train,y_pred_prob_train)
+    
+    r2,mse = reg_evaluate(model_regg_trained,X_test,y_pred_prob_test)
     
     print("r2 score is",r2)
     print("mean square error is",mse)

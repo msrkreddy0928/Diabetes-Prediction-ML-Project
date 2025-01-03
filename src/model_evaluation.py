@@ -27,9 +27,11 @@ def training_accuracy_(model,X_train,Y_train):
 
 def regg_evaluate_model(model,X_train,X_test):
     y_pred_train = model.predict(X_train)
+     
     y_pred_prob_train = 1 / (1 + np.exp(-y_pred_train))
     y_pred_test = model.predict(X_test)
     y_pred_prob_test = 1 / (1 + np.exp(-y_pred_test))
+
     return y_pred_prob_train,y_pred_prob_test
 
 

@@ -99,7 +99,7 @@ def predict():
         
         scaled_input_data[5] = bg
         
-        y_pred = regg_model.predict(scaled_input_data[[4]])[0]
+        y_pred = regg_model.predict(scaled_input_data)[0]
         logging.info("predicted the values using regression model")
         print(y_pred)   
         y_pred = np.round(y_pred*100,2)
@@ -119,13 +119,17 @@ def predict():
         #     pred_tex = "Your diabetes results is positive with "+str(prediction_prob[0][1]*100)+"% accuracy" 
         
         
+        pred_prob = model.predict_proba(scaled_input_data)
+        print(pred_prob)  
+        
+        
         prediction = model.predict(scaled_input_data)
         logging.info("predicted the values using random forest model")
         
         prediction = (prediction[0] > 0.5).astype(int)
         
         print(prediction)
-
+        
         if(prediction==0):
             if y_pred>49:
                 pred_text = "Your diabetes results is negative and having "+str(y_pred)+"% of chances to prone to diabetes.As chances of diabetes is more please consult your doctor." 
