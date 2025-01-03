@@ -56,8 +56,10 @@ def clean_data(data):
             categorical_features.append(column)
         else:
           continous_features.append(column)
+          
     
     # Store global variables for further use
+    
     global cleaned_df
     cleaned_df = data
     global cat_features 
