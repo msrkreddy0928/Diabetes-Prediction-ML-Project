@@ -5,7 +5,8 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 import logging
 from src.configuration import setup_logging
-
+from dotenv import load_dotenv
+import os
 
 
 
@@ -13,6 +14,13 @@ setup_logging()
 
 # Initialize the Flask application
 app = Flask(__name__)
+
+load_dotenv()
+
+url = os.getenv("url")
+
+print("url",url)
+
 
 
 # Loading pre-trained models,encoders,scalers
