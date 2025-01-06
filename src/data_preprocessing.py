@@ -13,7 +13,8 @@ import joblib
 import xgboost as xgb
 import matplotlib.pyplot as plt
 import seaborn as sns
-import logging   
+import logging
+from pymongo import MongoClient   
 
 
 
@@ -26,6 +27,28 @@ con_features = None
 trans_df = None
 corr=None    
 
+# load_data_from_database function: This function creates connection to database and retrive the dataset.
+
+def load_data_from_database(url):
+    
+    try:
+        client = MongoClient(url)
+        logging.info("sucessfully created  connection to mongodb server")
+    except Exception as e:
+        print(e)
+         
+    database = client["DiabetesMLProject"]    
+    collection = database["DiabetesProject"]
+    
+    cursor = collection.find()
+    
+    data = list(cursor)
+    
+    data = pd.DataFrame(data)
+    
+    return data
+
+
 # load_data function: This function is used to load a CSV file and return a pandas DataFrame.
 
 def load_data(file_path):
@@ -33,10 +56,13 @@ def load_data(file_path):
     return pd.read_csv(file_path)
 
 
+
 # clean_data function: Cleans the data by removing duplicates, handling missing values,
 # applying log transformation to certain columns, and categorizing features as categorical or continuous.
 
 def clean_data(data):
+    
+    data.drop(['_id'],axis=1,inplace=True)
     
     data.drop_duplicates(inplace=True)
     
