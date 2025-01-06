@@ -22,6 +22,9 @@ setup(
         'joblib',
         'scipy',
         'xgboost'
+        'pymongo'
+        'python-dotenv'
+
       
     ],
     classifiers=[
