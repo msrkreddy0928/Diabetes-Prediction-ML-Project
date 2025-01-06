@@ -1,4 +1,4 @@
-from  data_preprocessing import load_data,preprocessed_data,get_cleaned_df,get_cat_features,get_con_features,get_corr,get_trans_df
+from  data_preprocessing import load_data,preprocessed_data,get_cleaned_df,get_cat_features,get_con_features,get_corr,get_trans_df,load_data_from_database
 from model_training import train_model,save_model,train_reg_model,regg_train #FNN_train
 from model_evaluation import evaluate_model,training_accuracy_,grid_search,regg_evaluate_model,reg_evaluate #FNN_evaluate
 from sklearn.linear_model import LogisticRegression,LinearRegression
@@ -13,13 +13,18 @@ import joblib
 import numpy as np
 from configuration import setup_logging
 import logging
-
+import os
+from dotenv import load_dotenv
 
 
 setup_logging()
 
 logger = logging.getLogger(__name__)
 
+
+load_dotenv()
+
+url = os.getenv('url')
 
 models = { "Random Forest": RandomForestClassifier(class_weight='balanced',random_state=42)}
 
@@ -54,15 +59,19 @@ model_regg = LinearRegression()
 
 accuracy_dict = {}
 
-
 # Main function to run the pipeline, load data, preprocess it, train models, and evaluate performance
 
 def run_pipeline(file_path):
     logging.info("pipeline started")
     
-    data = load_data(file_path)
+    # data = load_data(file_path)
     
-    logging.info("dataset loading completed")
+    # logging.info("dataset loading completed")
+    
+    data = load_data_from_database(url)
+    
+    logging.info("dataset loading from database completed")
+    
     
     X_train,X_test,Y_train,Y_test = preprocessed_data(data)
   
@@ -135,12 +144,12 @@ def run_pipeline(file_path):
 
 
 
-    #pair_plot(cleaned_df.iloc[0:50000],"diabetes")                          #pair plots
-    #count_plot_data(cleaned_df,cat_features)                                #count plots
-    #raw_data_distribution(cleaned_df,con_features)                          #hist
-    #data_distribution_after_trans(trans_df,con_features)                    #hist after transformations
+    #pair_plot(cleaned_df.iloc[0:50000],"diabetes")                           #pair plots
+    #count_plot_data(cleaned_df,cat_features)                                 #count plots
+    #raw_data_distribution(cleaned_df,con_features)                           #hist
+    #data_distribution_after_trans(trans_df,con_features)                     #hist after transformations
     #plot_box_plots(cleaned_df,con_features)                                  #boxplots
-    #plot_correlation_matrix(corr)                                           #heat map
+    #plot_correlation_matrix(corr)                                            #heat map
     
 
 
